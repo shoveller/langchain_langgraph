@@ -1,11 +1,12 @@
 import type {ActionFunction} from "react-router";
-import {type ChatRequest} from "~/utils/toLangchainBaseMessages";
 import {ChatOpenAI} from "@langchain/openai";
 import {ChatPromptTemplate} from "@langchain/core/prompts";
 import {StringOutputParser} from "@langchain/core/output_parsers";
 import {RunnableMap} from "@langchain/core/runnables";
 import {createUIMessageStreamResponse} from "ai";
 import {toUIMessageStream} from "@ai-sdk/langchain";
+import mergeTextParts from "~/utils/mergeTextParts";
+import type {ChatRequest} from "~/utils/types";
 
 export const action: ActionFunction = async({ request }) => {
     const data = await request.json() as ChatRequest
@@ -32,10 +33,7 @@ export const action: ActionFunction = async({ request }) => {
 
     // data.messages에서 사용자의 마지막 메시지(텍스트 입력) 추출
     const lastMessage = data.messages[data.messages.length - 1]
-    const textInput = lastMessage.parts
-        .filter(part => part.type === 'text')
-        .map(part => (part as any).text)
-        .join('')
+    const textInput = mergeTextParts(lastMessage.parts)
 
     // fullChain에 올바른 형식으로 전달: {textInput: '...'}
     const result = await fullChain.stream({ textInput })

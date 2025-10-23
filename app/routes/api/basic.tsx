@@ -2,7 +2,8 @@ import type {ActionFunction} from "react-router";
 import {ChatOpenAI} from "@langchain/openai";
 import {createUIMessageStreamResponse, type UIMessage} from "ai";
 import {toUIMessageStream} from "@ai-sdk/langchain";
-import toLangchainBaseMessages, { type ChatRequest } from "~/utils/toLangchainBaseMessages";
+import toLangchainBaseMessages from "~/utils/toLangchainBaseMessages";
+import type {ChatRequest} from "~/utils/types";
 
 export const action: ActionFunction = async ({ request }) => {
     const data = await request.json() as ChatRequest
